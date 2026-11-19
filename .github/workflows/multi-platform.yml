@@ -1,10 +1,10 @@
-name: Build Geode Mod
+name: Build AutoFPCount
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - "**"
+      - autofpcount
 
 jobs:
   build:
@@ -14,35 +14,23 @@ jobs:
         config:
           - name: Windows
             os: windows-latest
-          - name: macOS
-            os: macos-latest
-          - name: Android32
-            os: ubuntu-latest
-            target: Android32
-          - name: Android64
-            os: ubuntu-latest
-            target: Android64
+            target: Win64
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build the mod
+      - name: Build AutoFPCount
         uses: geode-sdk/build-geode-mod@main
         with:
-          combine: true
+          path: AutoFPCounter-main
+          sdk: given
           target: ${{ matrix.config.target }}
 
-  package:
-    name: Package builds
-    runs-on: ubuntu-latest
-    needs: ['build']
-    steps:
-      - uses: geode-sdk/build-geode-mod/combine@main
-        id: build
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload Build
+        uses: actions/upload-artifact@v4
         with:
-          name: Build Output
-          path: ${{ steps.build.outputs.build-output }}
+          name: AutoFPCount-Windows
+          path: AutoFPCounter-main/build/**/*.geode
